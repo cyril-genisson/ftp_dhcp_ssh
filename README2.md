@@ -40,9 +40,9 @@ allow hotplug enp0s3
   address 172.18.0.3/16
   dns-nameservers 172.18.0.3
   dns-domain ftp.com
-  gateway 172.18.0.2
+  gateway 172.18.0.1
 ````
-![interface](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/343d6776-6e83-4b85-990e-99be7d35f1d4)
+![interfaces](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/27571e40-7d80-4673-80b4-4da0cf4e56a7)
 
 On configure ensuite notre serveur pour allouer les adresse IP de connecter, je vais aussi dire à DHCP de donner a ma deuxieme machine une adresse fixe, pour cela il faut éditer le fichier "/etc/dhcp/dhcpd.conf" et 
 l'interface dans le fichier "/etc/default/isc-dhcp-server: 
@@ -55,8 +55,8 @@ authoritative;
 subnet 172.18.0.0 netmask 255.255.0.0 {
   range 172.18.0.10 172.18.0.20 ;
   option domain-name "ftp.com";
-  option domain-name-server ns;
-  option broadcast-address 172.18.255.255;
+  option domain-name-server 8.8.8.8;
+  option broadcast-address 172.18.0.255;
   option routers 172.18.0.1;
   default-lease-time 5200 ;
   max-lease-time 6200;
@@ -67,11 +67,17 @@ host ftp {
   fixed-address 172.18.0.4; # adresse IP de mon DNS 
 }
 ````
-![interfacepv4](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/d6b01357-6324-40c3-88c8-ddc6a65b8c82)
+![Interfacesipv4](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/373f2331-82d7-4855-b036-46f8ac036d11)
 
-![dhcpconf](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/457db805-e487-46c3-b9fb-4109d2e70276)
+![dhcpconf](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/2269aa6e-eb06-4ad7-9395-93ceada57888)
 
-C'est la que je me rend compte que j'aurais du créer mon serveur DNS car l'IP static pour ma 2ème machine n'a pas était modifier celon mes choix 
+
+### Test de notre serveur DHCP 
+````shell
+systemctl restart isc-dhcp-server && systemctl status isc-dhcp-server
+````
+![testdhcp](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/2409b604-f859-4408-a2cf-0ff7bdc5de48)
+
 
 ## Configuration du DNS 
 Installation de bind9 sur la première machine : 
