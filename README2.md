@@ -118,7 +118,27 @@ dns     IN      A       172.18.0.4 #adresse ip de notre deuxème machine
 
 ![dbftp](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/620b0ffd-6bc4-4180-b8f8-dd6c96868400)
 
+Configuration des options pour sécuriser le serveur dans le fichier /etc/bind/named.conf.options
+````shell
+options {
+        diretory "/var/cache/bind";
+        allow-query { 172.18.0.0/16; };
+        allow-transfer { none; };
+        allow-recursion { 172.18.0.0/16; };
+        //forward { only; }
+        forwarders {8.8.8.8;};
+        dnssec-validation auto;
+        //listen-on-v4 { 172.18.0.3; };
+        listen-on-v6 { any; };
+};
+````
+![namedconf](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/96197cff-c0f8-488e-a006-fca2dbf2b4c4)
 
+### Test de notre server DNS 
+````shell
+systemctl restart named && systemctl status named
+````
 
+![systemctldns](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/b0fa8f39-61ad-4e17-869a-d087aa08c498)
 
 
