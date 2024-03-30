@@ -141,4 +141,13 @@ systemctl restart named && systemctl status named
 
 ![systemctldns](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/b0fa8f39-61ad-4e17-869a-d087aa08c498)
 
+### Test IP de la deuxieme machine virtuel 
+Maintenant voir si l'IP 172.18.0.4 à bien était adresser sur la deuxieme machine 
+````shell
+ip a
+````
+![ipavm2](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/19a4ffd2-683f-48da-8eb3-f013b069b7de)
+
+## Installation de FTP et SSh 
+Maintenant on bascule dans notre deuxieme machine et on installe 
 
