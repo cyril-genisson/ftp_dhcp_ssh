@@ -82,21 +82,37 @@ apt install bind9 bind9-utils
 Enregistrement du fichier de zone dans le fichier "/etc/bind/named.conf.local/" : 
 ````shell
 nano /etc/bind/named.conf.local
+
+zone "ftp.com" {
+  type master;
+  file "/etc/bind/db.ftp.com";
+};
+````
+![DNSnamedconf](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/349ceaab-4b92-4b4e-bad6-f123a483b60b)
+
+Maintenant on passe à la création de notre fichier de zone pour notre DNS : 
+````shell
 ;
 ; BIND data file for ftp.com domain
 ;
 $TTL    86400
 @       IN      SOA     ftp.com. admin.ftp.com. (
-                     2024032501         ; Serial
+                     2024033001         ; Serial
                           86400         ; Refresh
                            3600         ; Retry
                            7200         ; Expire
                           86400 )       ; Negative Cache TTL
 ;
 @       IN      NS      ns
-@       IN      A       172.16.0.3
-gw      IN      A       172.16.0.2
-ns      IN      A       172.16.0.3
-dns     IN      A       172.16.0.4
+@       IN      A       172.18.0.3
+ns      IN      A       172.18.0.3
+dns     IN      A       172.18.0.4 #adresse ip de notre deuxème machine
+
+````
+
+![dbftp](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/620b0ffd-6bc4-4180-b8f8-dd6c96868400)
+
+
+
 
 
