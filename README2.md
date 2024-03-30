@@ -14,7 +14,8 @@ avec SSH sur la seconde machine
 - Paramètres de Sécurité Additionnels
 
 ## Création des VM
-Tout d'abord, on configure le réseau dans lesquels nos machines vont pouvoir communiquer,
-nous utiliserons une adresse IP de type B : 
+Tout d'abord, on configure le réseau dans lesquels nos machines vont pouvoir communiquer,nous utiliserons une adresse IP de type B : 
 Adresse IPv4 du réseau : 172.18.0.0/16
-Et on désactive le DHCP 
+Et on désactive le DHCP : 
+(Screen/VM.png "Config Réseau")
+
