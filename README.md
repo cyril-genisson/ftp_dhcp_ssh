@@ -14,12 +14,22 @@ Liste des tâches à accomplir:
 - Test de connexion au serveur SFTP
 - Paramètres de sécurité additionnels
 
-## Remettons un peu d'ordre
-L'idée principale est d'avoir deux serveurs:
+ 
+__Remettons un peu d'ordre dans le propos__:
+l'idée principale est d'avoir deux serveurs:
 - ns.ftp.com: ipv4 172.16.0.3/16 - Services: ssh, dhcp, dns
 - dns.ftp.com: ipv4 172.16.0.4/16 - Services: ftp, ssh / sftp 
 
+connectés à une passerelle (gw.ftp.com 172.16.0.2/16)
 
+````mermaid
+graph LR
+        A[ns] <--> C[gw / router]
+        B[dns] <--> C
+        C <--> D{INTERNET}
+````
+## Configuration de _ns.ftp.com_:
+### Installation des paquets et configuration de l'interface ethernet
 ````shell
 # Installation des paquets pour la machine ns
 apt install vim openssh-server isc-dhcp-server bind9 bind9-utils man bash-completion 2>&1 /dev/null &
@@ -39,10 +49,6 @@ iface ens33 inet static
 EOF
 ````
 
-````shell
-# Installation des paquets pour la machine ftp
-apt install vim openssh-server proftpd-basic man bash-completion
-````
 ### Configuration du serveur DNS (paquet bind9)
 ````shell
 # On change les options pour sécuriser le serveur /etc/bind/named.conf.options
@@ -53,10 +59,8 @@ options {
   allow-query { 172.16.0.0/16; };
   allow-transfer { none; };
   allow-recursion { 172.16.0.0/16; };
-  //forward { only; };
   forwarders { 8.8.8.8; };
   dnssec-validation auto;
-  //listen-on-v4 { 172.16.0.3; };
   listen-on-v6 { any; };
 };
 
@@ -115,7 +119,7 @@ $TTL    86400
 
 EOF
 ````
-
+__On vérifie que tout est opérationnel__
 ````shell
 systemctl enable --now named &&
 systemctl status named
@@ -174,6 +178,41 @@ systemctl status isc-dhcp-server
              └─1116 /usr/sbin/dhcpd -4 -q -cf /etc/dhcp/dhcpd.conf
 ````
 
+## Configuration de dns.ftp.com
+### Installation des paquets
+````shell
+apt install vim openssh-server proftpd-basic bash-completion &&
+systemctl restart networking
+````
+
+### Configuration du serveur SFTP
+````shell
+# /etc/ssh/sshd_conf
+#Changement du port de connexion
+PORT 6500
+
+# Ajout du paramètre permettant la connexion qu'à l'utilisateur
+# laplateforme
+AllowUsers laplateforme
+````
+On recharge le service
+````shell
+systemctl restart sshd &&
+systemctl status sshd
+● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/lib/systemd/system/ssh.service; enabled; preset: enabled)
+     Active: active (running) since Sun 2024-03-28 20:27:11 CEST; 7s ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+    Process: 635 ExecStartPre=/usr/sbin/sshd -t (code=exited, status=0/SUCCESS)
+   Main PID: 680 (sshd)
+      Tasks: 1 (limit: 2265)
+     Memory: 5.9M
+        CPU: 628ms
+     CGroup: /system.slice/ssh.service
+             └─680 "sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups"
+````
+
 Vérification sur la machine 'dns.ftp.com':
 ````shell
 kaman@ftp:~$ ip addr show
@@ -206,3 +245,5 @@ PING google.fr (216.58.198.67) 56(84) bytes of data.
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 3.934/3.934/3.934/0.000 ms
 ````
+
+Le reste de la démonstration se fait directement sur les machines virtuelles!!!
