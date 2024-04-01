@@ -184,6 +184,11 @@ systemctl status isc-dhcp-server
 apt install vim openssh-server proftpd-basic bash-completion &&
 systemctl restart networking
 ````
+### Création de l'utilisateur
+````shell
+useradd -m -c "La Plateforme" -s /bin/bash laplateforme
+echo 'laplateforme:Marseille13!' | chpasswd
+````
 
 ### Configuration du serveur SFTP
 ````shell
