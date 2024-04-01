@@ -148,6 +148,61 @@ ip a
 ````
 ![ipavm2](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/19a4ffd2-683f-48da-8eb3-f013b069b7de)
 
-## Installation de FTP et SSh 
-Maintenant on bascule dans notre deuxieme machine et on installe 
+## Installation de FTP et SSH
+Maintenant on bascule sur notre deuxieme machine et on installe ftp et openssh 
+````shell
+apt install -y proftpd
+apt install openssh-server
+````
+### Création de notre nouvelle identifiant 
+````shell
+useradd -m laplateforme1
+passwd laplateforme1
+````
+![adduser](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/1460486a-6e1f-4d36-a14a-0b6c572147ed)
 
+### Configuration de FTP 
+On configure FTP  :
+````shell
+nano /etc/proftpd/proftpd.conf
+````
+````shell
+#On verifie si cette ligne est bien commenter 
+MaxClients 1
+#Une seule session de connexion possible 
+MaxClientsPerHost 1
+````
+![ftpconfig](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/5ee5e5fc-f373-4b8b-bd33-d02e44e22b85)
+
+### Configuration de SSH
+Utilisation du serveur SSH pour les connexions au FTP en SFTP:
+````shell
+# On accède au fichier conf sshd
+nano /etc/ssh/sshd_conf
+````
+````shell
+#On vérifie si cette ligne existe ou sinon la rajouter
+Subsystem    sftp     /usr/lib/openssh/sftp-server
+
+# On modifie le port
+Port 6500
+# On évite toute connxion anonyme :
+PermitRootLogin no 
+PasswordAuthentification  yes
+PermitEmptyPasswords no
+UsePAM yes
+````
+![Permitroot](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/d134e78a-e829-4efd-a753-3584f7d9fb0a)
+
+
+![Capture d’écran du 2024-04-01 13-04-05](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/04db132d-323e-4645-b176-e2c27e021554)
+
+![port6500](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/84cad5b4-403e-4c4e-8e9f-13a8cea3a0b9)
+
+![passpermit](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/1e72f83d-2e39-46b2-b55a-c1906798a3eb)
+
+````shell
+#Verification status ssh
+systemctl restart ssh && systemctl status ssh
+````
+![sshstate](https://github.com/cyril-genisson/ftp_dhcp_ssh/assets/147488564/0398a007-e46b-4d4c-a3a5-e9f79a790348)
